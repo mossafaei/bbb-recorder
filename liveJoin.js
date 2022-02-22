@@ -68,12 +68,20 @@ async function main() {
         await page.goto(url, {waitUntil: 'networkidle2'})
         await page.setBypassCSP(true)
 
-        await page.waitForSelector('[aria-label="تنها شنونده"]');
-        await page.click('[aria-label="تنها شنونده"]', {waitUntil: 'domcontentloaded'});
+        try{
+            console.log("Listen only");
+            await page.waitForSelector('[aria-label="تنها شنونده"]');
+            await page.click('[aria-label="تنها شنونده"]', {waitUntil: 'domcontentloaded'});
+        }catch(err){
+        }
 
-        await page.waitForSelector('[aria-label="پخش صدا"]');
-        await page.click('[aria-label="پخش صدا"]', {waitUntil: 'domcontentloaded'});
 
+        try{
+            console.log("Play audio");
+            await page.waitForSelector('[aria-label="پخش صدا"]');
+            await page.click('[aria-label="پخش صدا"]', {waitUntil: 'domcontentloaded'});
+        }catch(err){
+        }
         /**
          * Don't close the chatbox
          * 
@@ -83,6 +91,7 @@ async function main() {
         await page.$eval('[class^=navbar]', element => element.style.display = "none");
         */
 
+        console.log("Wait for Leave audio ...");
         await page.$eval('.Toastify', element => element.style.display = "none");
         await page.waitForSelector('button[aria-label="ترک صدا"]');
         await page.$eval('[class^=actionsbar] > [class^=center]', element => element.style.display = "none");
@@ -94,10 +103,11 @@ async function main() {
             window.postMessage({type: 'REC_START'}, '*')
         })
 
+        console.log("Wait for end ...");
         if(duration > 0){
             await page.waitFor((duration * 1000))
         }else{
-            await page.waitForSelector('[class^=modal] > [class^=content] > button[description="شما را از جلسه خارج میکند"]', {
+            await page.waitForSelector('button[description="شما را از جلسه خارج میکند"]', {
                 timeout: 0
             });
         }
@@ -107,6 +117,7 @@ async function main() {
             window.postMessage({type: 'REC_STOP'}, '*')
         }, exportname)
 
+        console.log("Wait for download ...");
         // Wait for download of webm to complete
         await page.waitForSelector('html.downloadComplete', {timeout: 0})
 
