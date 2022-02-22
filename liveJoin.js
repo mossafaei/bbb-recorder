@@ -68,16 +68,23 @@ async function main() {
         await page.goto(url, {waitUntil: 'networkidle2'})
         await page.setBypassCSP(true)
 
-        await page.waitForSelector('[aria-label="Listen only"]');
-        await page.click('[aria-label="Listen only"]', {waitUntil: 'domcontentloaded'});
+        await page.waitForSelector('[aria-label="تنها شنونده"]');
+        await page.click('[aria-label="تنها شنونده"]', {waitUntil: 'domcontentloaded'});
 
+        await page.waitForSelector('[aria-label="پخش صدا"]');
+        await page.click('[aria-label="پخش صدا"]', {waitUntil: 'domcontentloaded'});
+
+        /**
+         * Don't close the chatbox
+         * 
         await page.waitForSelector('[id="chat-toggle-button"]');
         await page.click('[id="chat-toggle-button"]', {waitUntil: 'domcontentloaded'});
-        await page.click('button[aria-label="Users and messages toggle"]', {waitUntil: 'domcontentloaded'});
+        await page.click('button[aria-label="تغییر وضعیت نمایش کاربران و پیام ها"]', {waitUntil: 'domcontentloaded'});
         await page.$eval('[class^=navbar]', element => element.style.display = "none");
+        */
 
         await page.$eval('.Toastify', element => element.style.display = "none");
-        await page.waitForSelector('button[aria-label="Leave audio"]');
+        await page.waitForSelector('button[aria-label="ترک صدا"]');
         await page.$eval('[class^=actionsbar] > [class^=center]', element => element.style.display = "none");
         await page.mouse.move(0, 700);
         await page.addStyleTag({content: '@keyframes refresh {0%{ opacity: 1 } 100% { opacity: 0.99 }} body { animation: refresh .01s infinite }'});
@@ -90,7 +97,7 @@ async function main() {
         if(duration > 0){
             await page.waitFor((duration * 1000))
         }else{
-            await page.waitForSelector('[class^=modal] > [class^=content] > button[description="Logs you out of the meeting"]', {
+            await page.waitForSelector('[class^=modal] > [class^=content] > button[description="شما را از جلسه خارج میکند"]', {
                 timeout: 0
             });
         }
